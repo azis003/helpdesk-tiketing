@@ -1,5 +1,7 @@
 import { createApp, h } from 'vue'
 import { createInertiaApp } from '@inertiajs/vue3'
+import { ZiggyVue } from 'ziggy-js'
+import { Ziggy } from './ziggy'
 
 createInertiaApp({
     title: (title) => title ? `${title} — Helpdesk Tiketing` : 'Helpdesk Tiketing',
@@ -8,8 +10,12 @@ createInertiaApp({
         return pages[`./Pages/${name}.vue`]
     },
     setup({ el, App, props, plugin }) {
+        // Global access for script setup
+        window.Ziggy = Ziggy;
+        
         createApp({ render: () => h(App, props) })
             .use(plugin)
+            .use(ZiggyVue, Ziggy)
             .mount(el)
     },
 })

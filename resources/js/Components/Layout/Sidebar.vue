@@ -28,16 +28,16 @@ const menuGroups = [
     {
         title: 'Master Data',
         items: [
-            { name: 'Kategori Tiket', route: 'dashboard', icon: 'M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z', permission: 'master.category' },
-            { name: 'Level Prioritas', route: 'dashboard', icon: 'M13 10V3L4 14h7v7l9-11h-7z', permission: 'master.priority' },
-            { name: 'Unit Kerja', route: 'dashboard', icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4', permission: 'master.work-unit' },
+            { name: 'Kategori Tiket', route: 'master.categories.index', icon: 'M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z', permission: 'master.category' },
+            { name: 'Level Prioritas', route: 'master.priorities.index', icon: 'M13 10V3L4 14h7v7l9-11h-7z', permission: 'master.priority' },
+            { name: 'Unit Kerja', route: 'master.work-units.index', icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4', permission: 'master.work-unit' },
         ]
     },
     {
         title: 'Pengaturan',
         items: [
-            { name: 'Manajemen Pengguna', route: 'dashboard', icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z', permission: 'master.user' },
-            { name: 'Hak Akses & Peran', route: 'dashboard', icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-7.618 3.04c-.753 0-1.487.06-2.201.174A11.03 11.03 0 002 10c0 5.008 3.358 9.228 8 10.438 4.642-1.21 8-5.43 8-10.438 0-1.32-.234-2.585-.662-3.758a12.015 12.015 0 01-1.72-2.7z', permission: 'master.permission' },
+            { name: 'Manajemen Pengguna', route: 'master.users.index', icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z', permission: 'master.user' },
+            { name: 'Hak Akses & Peran', route: 'master.permissions.index', icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-7.618 3.04c-.753 0-1.487.06-2.201.174A11.03 11.03 0 002 10c0 5.008 3.358 9.228 8 10.438 4.642-1.21 8-5.43 8-10.438 0-1.32-.234-2.585-.662-3.758a12.015 12.015 0 01-1.72-2.7z', permission: 'master.permission' },
         ]
     },
     {

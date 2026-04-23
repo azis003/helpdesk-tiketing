@@ -11,7 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable(['username', 'name', 'email', 'password', 'avatar', 'work_unit_id', 'is_active'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -26,8 +26,28 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean',
         ];
+    }
+
+    public function workUnit()
+    {
+        return $this->belongsTo(WorkUnit::class);
+    }
+
+    public function reportedTickets()
+    {
+        return $this->hasMany(Ticket::class, 'reporter_id');
+    }
+
+    public function handledTickets()
+    {
+        return $this->hasMany(Ticket::class, 'handler_id');
+    }
+
+    public function teamMemberships()
+    {
+        return $this->hasMany(TeamMember::class);
     }
 }

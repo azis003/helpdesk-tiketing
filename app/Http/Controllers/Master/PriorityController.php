@@ -10,10 +10,20 @@ use Inertia\Inertia;
 
 class PriorityController extends Controller
 {
-    public function index()
+    public function index(\Illuminate\Http\Request $request)
     {
-        $priorities = TicketPriority::paginate(10);
-        return Inertia::render('Master/Priority/Index', ['priorities' => $priorities]);
+        $query = \App\Models\TicketPriority::query();
+
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        $priorities = $query->orderBy('level')->paginate(10)->withQueryString();
+
+        return Inertia::render('Master/Priority/Index', [
+            'priorities' => $priorities,
+            'filters' => $request->only(['search'])
+        ]);
     }
 
     public function create()

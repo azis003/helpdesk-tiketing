@@ -13,13 +13,23 @@ use Inertia\Inertia;
 
 class WorkUnitController extends Controller
 {
-    public function index()
+    public function index(\Illuminate\Http\Request $request)
     {
-        $workUnits = WorkUnit::query()
-            ->withCount('members')
-            ->paginate(10);
+        $query = \App\Models\WorkUnit::withCount('members');
 
-        return Inertia::render('Master/WorkUnit/Index', ['workUnits' => $workUnits]);
+        if ($request->filled('search')) {
+            $query->where(function($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%')
+                  ->orWhere('code', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        $workUnits = $query->latest()->paginate(10)->withQueryString();
+
+        return Inertia::render('Master/WorkUnit/Index', [
+            'workUnits' => $workUnits,
+            'filters' => $request->only(['search'])
+        ]);
     }
 
     public function create()

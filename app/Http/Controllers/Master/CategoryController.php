@@ -10,10 +10,23 @@ use Inertia\Inertia;
 
 class CategoryController extends Controller
 {
-    public function index()
+    public function index(\Illuminate\Http\Request $request)
     {
-        $categories = TicketCategory::withCount('tickets')->paginate(10);
-        return Inertia::render('Master/Category/Index', ['categories' => $categories]);
+        $query = TicketCategory::withCount('tickets');
+
+        if ($request->filled('search')) {
+            $query->where(function($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%')
+                  ->orWhere('description', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        $categories = $query->latest()->paginate(10)->withQueryString();
+
+        return Inertia::render('Master/Category/Index', [
+            'categories' => $categories,
+            'filters' => $request->only(['search'])
+        ]);
     }
 
     public function create()

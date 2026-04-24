@@ -30,6 +30,8 @@ class UserController extends Controller
         
         return Inertia::render('Master/User/Index', [
             'users' => $users,
+            'roles' => Role::query()->orderBy('name')->get(),
+            'workUnits' => WorkUnit::query()->active()->orderBy('name')->get(),
             'filters' => $request->only(['search'])
         ]);
     }

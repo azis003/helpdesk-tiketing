@@ -232,6 +232,7 @@ watch(search, debounce((value) => {
                             Kode Unit <span class="text-red-500">*</span>
                         </label>
                         <input id="code" type="text" v-model="createForm.code" class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-600 font-medium" placeholder="Contoh: IT, HR, dll." required />
+                        <div v-if="createForm.errors.code" class="text-sm text-red-500 mt-2 font-medium">{{ createForm.errors.code }}</div>
                     </div>
 
                     <div>
@@ -239,6 +240,7 @@ watch(search, debounce((value) => {
                             Nama Unit Kerja <span class="text-red-500">*</span>
                         </label>
                         <input id="name" type="text" v-model="createForm.name" class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-600 font-medium" required />
+                        <div v-if="createForm.errors.name" class="text-sm text-red-500 mt-2 font-medium">{{ createForm.errors.name }}</div>
                     </div>
 
                     <div class="flex items-center justify-end gap-3 pt-4">
@@ -284,6 +286,7 @@ watch(search, debounce((value) => {
                             Kode Unit <span class="text-red-500">*</span>
                         </label>
                         <input id="edit_code" type="text" v-model="editForm.code" class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-600 font-medium" required />
+                        <div v-if="editForm.errors.code" class="text-sm text-red-500 mt-2 font-medium">{{ editForm.errors.code }}</div>
                     </div>
 
                     <div>
@@ -291,6 +294,7 @@ watch(search, debounce((value) => {
                             Nama Unit Kerja <span class="text-red-500">*</span>
                         </label>
                         <input id="edit_name" type="text" v-model="editForm.name" class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-600 font-medium" required />
+                        <div v-if="editForm.errors.name" class="text-sm text-red-500 mt-2 font-medium">{{ editForm.errors.name }}</div>
                     </div>
 
                     <div class="flex items-center justify-end gap-3 pt-4">

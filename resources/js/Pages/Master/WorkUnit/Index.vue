@@ -70,7 +70,7 @@ const toggleActive = (unit) => {
         text: `Apakah Anda yakin ingin ${unit.is_active ? 'menonaktifkan' : 'mengaktifkan'} unit kerja ini?`,
         icon: 'question',
         showCancelButton: true,
-        confirmButtonColor: '#059669',
+        confirmButtonColor: '#3b82f6',
         cancelButtonColor: '#94a3b8',
         confirmButtonText: 'Ya, Ubah!',
         cancelButtonText: 'Batal',
@@ -107,7 +107,7 @@ watch(search, debounce((value) => {
             <button 
                 type="button"
                 @click="openCreateModal"
-                class="inline-flex items-center justify-center px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl shadow-lg shadow-emerald-200 transition-all active:scale-95 group"
+                class="inline-flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-lg shadow-blue-200 transition-all active:scale-95 group"
             >
                 <svg class="w-5 h-5 mr-2 transition-transform group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 6v12m6-6H6" />
@@ -128,7 +128,7 @@ watch(search, debounce((value) => {
                         v-model="search"
                         type="text" 
                         placeholder="Cari kode atau nama unit..." 
-                        class="block w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none text-slate-600"
+                        class="block w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-600"
                     />
                 </div>
             </div>
@@ -166,8 +166,8 @@ watch(search, debounce((value) => {
                                          type="button"
                                          @click="toggleActive(unit)"
                                          :disabled="toggleForm.processing"
-                                         class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:opacity-50"
-                                         :class="unit.is_active ? 'bg-emerald-600' : 'bg-slate-200'"
+                                         class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+                                         :class="unit.is_active ? 'bg-blue-600' : 'bg-slate-200'"
                                      >
                                         <span
                                             class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
@@ -190,7 +190,7 @@ watch(search, debounce((value) => {
                                     <button 
                                         type="button"
                                         @click="openEditModal(unit)"
-                                        class="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all"
+                                        class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
                                         title="Edit"
                                     >
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -231,21 +231,21 @@ watch(search, debounce((value) => {
                         <label for="code" class="block text-sm font-bold text-slate-700 mb-2">
                             Kode Unit <span class="text-red-500">*</span>
                         </label>
-                        <input id="code" type="text" v-model="createForm.code" class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none text-slate-600 font-medium" placeholder="Contoh: IT, HR, dll." required />
+                        <input id="code" type="text" v-model="createForm.code" class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-600 font-medium" placeholder="Contoh: IT, HR, dll." required />
                     </div>
 
                     <div>
                         <label for="name" class="block text-sm font-bold text-slate-700 mb-2">
                             Nama Unit Kerja <span class="text-red-500">*</span>
                         </label>
-                        <input id="name" type="text" v-model="createForm.name" class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none text-slate-600 font-medium" required />
+                        <input id="name" type="text" v-model="createForm.name" class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-600 font-medium" required />
                     </div>
 
                     <div class="flex items-center justify-end gap-3 pt-4">
                         <button type="button" @click="showCreateModal = false" :disabled="createForm.processing" class="px-6 py-3 text-slate-600 font-bold hover:bg-slate-100 rounded-2xl transition-all disabled:opacity-50">
                             Batal
                         </button>
-                        <button type="submit" :disabled="createForm.processing" class="px-8 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl shadow-lg shadow-emerald-200 transition-all active:scale-95 disabled:opacity-50 flex items-center">
+                        <button type="submit" :disabled="createForm.processing" class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-lg shadow-blue-200 transition-all active:scale-95 disabled:opacity-50 flex items-center">
                             <svg v-if="createForm.processing" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -259,8 +259,8 @@ watch(search, debounce((value) => {
                 <!-- Loading Overlay -->
                 <div v-if="createForm.processing" class="absolute inset-0 bg-white/60 backdrop-blur-[1px] flex items-center justify-center z-[100]">
                     <div class="flex flex-col items-center">
-                        <div class="w-12 h-12 border-4 border-emerald-600/20 border-t-emerald-600 rounded-full animate-spin"></div>
-                        <p class="mt-4 text-emerald-600 font-bold text-sm tracking-wide">Memproses Data...</p>
+                        <div class="w-12 h-12 border-4 border-blue-600/20 border-t-blue-600 rounded-full animate-spin"></div>
+                        <p class="mt-4 text-blue-600 font-bold text-sm tracking-wide">Memproses Data...</p>
                     </div>
                 </div>
             </div>
@@ -283,21 +283,21 @@ watch(search, debounce((value) => {
                         <label for="edit_code" class="block text-sm font-bold text-slate-700 mb-2">
                             Kode Unit <span class="text-red-500">*</span>
                         </label>
-                        <input id="edit_code" type="text" v-model="editForm.code" class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none text-slate-600 font-medium" required />
+                        <input id="edit_code" type="text" v-model="editForm.code" class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-600 font-medium" required />
                     </div>
 
                     <div>
                         <label for="edit_name" class="block text-sm font-bold text-slate-700 mb-2">
                             Nama Unit Kerja <span class="text-red-500">*</span>
                         </label>
-                        <input id="edit_name" type="text" v-model="editForm.name" class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none text-slate-600 font-medium" required />
+                        <input id="edit_name" type="text" v-model="editForm.name" class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none text-slate-600 font-medium" required />
                     </div>
 
                     <div class="flex items-center justify-end gap-3 pt-4">
                         <button type="button" @click="showEditModal = false" :disabled="editForm.processing" class="px-6 py-3 text-slate-600 font-bold hover:bg-slate-100 rounded-2xl transition-all disabled:opacity-50">
                             Batal
                         </button>
-                        <button type="submit" :disabled="editForm.processing" class="px-8 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl shadow-lg shadow-emerald-200 transition-all active:scale-95 disabled:opacity-50 flex items-center">
+                        <button type="submit" :disabled="editForm.processing" class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-lg shadow-blue-200 transition-all active:scale-95 disabled:opacity-50 flex items-center">
                             <svg v-if="editForm.processing" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -311,8 +311,8 @@ watch(search, debounce((value) => {
                 <!-- Loading Overlay -->
                 <div v-if="editForm.processing" class="absolute inset-0 bg-white/60 backdrop-blur-[1px] flex items-center justify-center z-[100]">
                     <div class="flex flex-col items-center">
-                        <div class="w-12 h-12 border-4 border-emerald-600/20 border-t-emerald-600 rounded-full animate-spin"></div>
-                        <p class="mt-4 text-emerald-600 font-bold text-sm tracking-wide">Memperbarui Data...</p>
+                        <div class="w-12 h-12 border-4 border-blue-600/20 border-t-blue-600 rounded-full animate-spin"></div>
+                        <p class="mt-4 text-blue-600 font-bold text-sm tracking-wide">Memperbarui Data...</p>
                     </div>
                 </div>
             </div>

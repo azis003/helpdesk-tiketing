@@ -22,7 +22,8 @@ class PriorityController extends Controller
 
         return Inertia::render('Master/Priority/Index', [
             'priorities' => $priorities,
-            'filters' => $request->only(['search'])
+            'filters' => $request->only(['search']),
+            'next_level' => (\App\Models\TicketPriority::max('level') ?? 0) + 1,
         ]);
     }
 

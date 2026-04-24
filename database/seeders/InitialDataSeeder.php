@@ -6,7 +6,6 @@ use App\Models\TicketCategory;
 use App\Models\TicketPriority;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 class InitialDataSeeder extends Seeder
 {
@@ -23,7 +22,10 @@ class InitialDataSeeder extends Seeder
         ];
 
         foreach ($priorities as $priority) {
-            TicketPriority::create($priority);
+            TicketPriority::query()->firstOrCreate(
+                ['level' => $priority['level']],
+                $priority,
+            );
         }
 
         // 2. Categories
@@ -36,18 +38,23 @@ class InitialDataSeeder extends Seeder
         ];
 
         foreach ($categories as $category) {
-            TicketCategory::create($category);
+            TicketCategory::query()->firstOrCreate(
+                ['name' => $category['name']],
+                $category,
+            );
         }
 
         // 3. Super Admin User
-        $superAdmin = User::create([
+        $superAdmin = User::query()->firstOrCreate(['username' => 'superadmin'], [
             'username' => 'superadmin',
             'name' => 'Super Administrator',
             'email' => 'admin@helpdesk.test',
-            'password' => Hash::make('password'),
+            'password' => 'password',
             'is_active' => true,
         ]);
 
-        $superAdmin->assignRole('super_admin');
+        if (! $superAdmin->hasRole('super_admin')) {
+            $superAdmin->assignRole('super_admin');
+        }
     }
 }

@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Enums\PauseReason;
 
 return new class extends Migration
 {
@@ -14,7 +15,7 @@ return new class extends Migration
         Schema::create('ticket_time_logs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('ticket_id')->constrained('tickets')->cascadeOnDelete();
-            $table->enum('pause_reason', ['waiting_for_info', 'waiting_third_party']);
+            $table->enum('pause_reason', array_column(PauseReason::cases(), 'value'));
             $table->text('note')->nullable();
             $table->timestamp('paused_at');
             $table->timestamp('resumed_at')->nullable();

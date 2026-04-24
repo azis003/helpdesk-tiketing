@@ -3,10 +3,14 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\TicketStatus;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
@@ -31,23 +35,29 @@ class User extends Authenticatable
         ];
     }
 
-    public function workUnit()
+    public function scopeActive(Builder $query): void
+    {
+        $query->where('is_active', true);
+    }
+
+    public function workUnit(): BelongsTo
     {
         return $this->belongsTo(WorkUnit::class);
     }
 
-    public function reportedTickets()
+    public function reportedTickets(): HasMany
     {
         return $this->hasMany(Ticket::class, 'reporter_id');
     }
 
-    public function handledTickets()
+    public function handledTickets(): HasMany
     {
         return $this->hasMany(Ticket::class, 'handler_id');
     }
 
-    public function teamMemberships()
+    public function activeAssignedTickets(): HasMany
     {
-        return $this->hasMany(TeamMember::class);
+        return $this->handledTickets()->whereIn('status', TicketStatus::activeAssignmentValues());
     }
+
 }

@@ -3,16 +3,22 @@
 namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
-use App\Models\WorkUnit;
+use App\Http\Requests\Master\StoreWorkUnitMemberRequest;
+use App\Http\Requests\Master\StoreWorkUnitRequest;
+use App\Http\Requests\Master\UpdateWorkUnitRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
+use App\Models\WorkUnit;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class WorkUnitController extends Controller
 {
     public function index()
     {
-        $workUnits = WorkUnit::paginate(10);
+        $workUnits = WorkUnit::query()
+            ->withCount('members')
+            ->paginate(10);
+
         return Inertia::render('Master/WorkUnit/Index', ['workUnits' => $workUnits]);
     }
 
@@ -21,14 +27,9 @@ class WorkUnitController extends Controller
         return Inertia::render('Master/WorkUnit/Create');
     }
 
-    public function store(Request $request)
+    public function store(StoreWorkUnitRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:100',
-            'code' => 'required|string|max:20|unique:work_units,code',
-        ]);
-
-        WorkUnit::create($validated);
+        WorkUnit::query()->create($request->validated());
 
         return redirect()->route('master.work-units.index')->with('success', 'Unit Kerja berhasil ditambahkan.');
     }
@@ -38,14 +39,9 @@ class WorkUnitController extends Controller
         return Inertia::render('Master/WorkUnit/Edit', ['workUnit' => $workUnit]);
     }
 
-    public function update(Request $request, WorkUnit $workUnit)
+    public function update(UpdateWorkUnitRequest $request, WorkUnit $workUnit)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:100',
-            'code' => 'required|string|max:20|unique:work_units,code,' . $workUnit->id,
-        ]);
-
-        $workUnit->update($validated);
+        $workUnit->update($request->validated());
 
         return redirect()->route('master.work-units.index')->with('success', 'Unit Kerja berhasil diperbarui.');
     }
@@ -58,37 +54,45 @@ class WorkUnitController extends Controller
 
     public function members(WorkUnit $workUnit)
     {
-        $workUnit->load('members.user');
-        $users = User::where('is_active', 1)->get();
+        $workUnit->load(['members' => fn ($query) => $query->orderBy('name')]);
+        $users = User::query()
+            ->active()
+            ->whereNull('work_unit_id')
+            ->orderBy('name')
+            ->get();
+
         return Inertia::render('Master/WorkUnit/Members', [
             'workUnit' => $workUnit,
             'users' => $users,
         ]);
     }
 
-    public function storeMember(Request $request, WorkUnit $workUnit)
+    public function storeMember(StoreWorkUnitMemberRequest $request, WorkUnit $workUnit)
     {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-        ]);
+        $user = User::query()->findOrFail($request->validated()['user_id']);
 
-        // Cek duplicate manual atau pakai syncWithoutDetaching
-        $workUnit->members()->syncWithoutDetaching([$request->user_id]);
+        if ($user->work_unit_id !== null) {
+            return redirect()->back()->withErrors([
+                'user_id' => 'Pengguna sudah terdaftar pada unit kerja lain.',
+            ]);
+        }
 
-        // Update work_unit_id di tabel users
-        User::where('id', $request->user_id)->update(['work_unit_id' => $workUnit->id]);
+        DB::transaction(function () use ($user, $workUnit): void {
+            $user->update(['work_unit_id' => $workUnit->id]);
+        });
 
         return redirect()->back()->with('success', 'Anggota berhasil ditambahkan ke Unit Kerja.');
     }
 
     public function destroyMember(WorkUnit $workUnit, User $user)
     {
-        $workUnit->members()->detach($user->id);
-        
-        // Opsional: jika ingin mengosongkan work_unit_id di user
-        if ($user->work_unit_id == $workUnit->id) {
-            $user->update(['work_unit_id' => null]);
+        if ($user->work_unit_id !== $workUnit->id) {
+            return redirect()->back()->withErrors([
+                'user_id' => 'Pengguna ini bukan anggota dari unit kerja tersebut.',
+            ]);
         }
+
+        $user->update(['work_unit_id' => null]);
 
         return redirect()->back()->with('success', 'Anggota berhasil dihapus dari Unit Kerja.');
     }

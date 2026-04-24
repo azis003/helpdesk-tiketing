@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Enums\CommentType;
 
 return new class extends Migration
 {
@@ -16,8 +17,8 @@ return new class extends Migration
             $table->foreignId('ticket_id')->constrained('tickets')->cascadeOnDelete();
             $table->foreignId('user_id')->constrained('users')->restrictOnDelete();
             $table->text('body');
-            $table->enum('type', ['comment', 'clarification', 'clarification_reply'])
-                  ->default('comment');
+            $table->enum('type', array_column(CommentType::cases(), 'value'))
+                ->default(CommentType::Comment->value);
             $table->timestamp('created_at')->useCurrent();
             // TIDAK ADA updated_at — komentar immutable
 

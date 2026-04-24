@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Master\StoreCategoryRequest;
+use App\Http\Requests\Master\UpdateCategoryRequest;
 use App\Models\TicketCategory;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class CategoryController extends Controller
@@ -20,14 +21,9 @@ class CategoryController extends Controller
         return Inertia::render('Master/Category/Create');
     }
 
-    public function store(Request $request)
+    public function store(StoreCategoryRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:100',
-            'description' => 'nullable|string',
-        ]);
-
-        TicketCategory::create($validated);
+        TicketCategory::query()->create($request->validated());
 
         return redirect()->route('master.categories.index')->with('success', 'Kategori berhasil ditambahkan.');
     }
@@ -37,14 +33,9 @@ class CategoryController extends Controller
         return Inertia::render('Master/Category/Edit', ['category' => $category]);
     }
 
-    public function update(Request $request, TicketCategory $category)
+    public function update(UpdateCategoryRequest $request, TicketCategory $category)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:100',
-            'description' => 'nullable|string',
-        ]);
-
-        $category->update($validated);
+        $category->update($request->validated());
 
         return redirect()->route('master.categories.index')->with('success', 'Kategori berhasil diperbarui.');
     }

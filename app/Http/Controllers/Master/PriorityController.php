@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Master\StorePriorityRequest;
+use App\Http\Requests\Master\UpdatePriorityRequest;
 use App\Models\TicketPriority;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class PriorityController extends Controller
@@ -20,15 +21,9 @@ class PriorityController extends Controller
         return Inertia::render('Master/Priority/Create');
     }
 
-    public function store(Request $request)
+    public function store(StorePriorityRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:50',
-            'level' => 'required|integer|min:1|unique:ticket_priorities,level',
-            'color' => 'nullable|string|regex:/^#[0-9A-Fa-f]{6}$/',
-        ]);
-
-        TicketPriority::create($validated);
+        TicketPriority::query()->create($request->validated());
 
         return redirect()->route('master.priorities.index')->with('success', 'Prioritas berhasil ditambahkan.');
     }
@@ -38,15 +33,9 @@ class PriorityController extends Controller
         return Inertia::render('Master/Priority/Edit', ['priority' => $priority]);
     }
 
-    public function update(Request $request, TicketPriority $priority)
+    public function update(UpdatePriorityRequest $request, TicketPriority $priority)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:50',
-            'level' => 'required|integer|min:1|unique:ticket_priorities,level,' . $priority->id,
-            'color' => 'nullable|string|regex:/^#[0-9A-Fa-f]{6}$/',
-        ]);
-
-        $priority->update($validated);
+        $priority->update($request->validated());
 
         return redirect()->route('master.priorities.index')->with('success', 'Prioritas berhasil diperbarui.');
     }

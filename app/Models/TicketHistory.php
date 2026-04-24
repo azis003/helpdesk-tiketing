@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use App\Enums\HistoryAction;
+use App\Enums\TicketStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TicketHistory extends Model
 {
@@ -18,26 +20,28 @@ class TicketHistory extends Model
     ];
 
     protected $casts = [
+        'from_status' => TicketStatus::class,
+        'to_status' => TicketStatus::class,
+        'action' => HistoryAction::class,
         'created_at' => 'datetime',
-        // 'action' => HistoryAction::class, // Action can be complex, sometimes string
     ];
 
-    public function ticket()
+    public function ticket(): BelongsTo
     {
         return $this->belongsTo(Ticket::class);
     }
 
-    public function actor()
+    public function actor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'actor_id');
     }
 
-    public function newHandler()
+    public function newHandler(): BelongsTo
     {
         return $this->belongsTo(User::class, 'new_handler_id');
     }
 
-    public function timeLog()
+    public function timeLog(): BelongsTo
     {
         return $this->belongsTo(TicketTimeLog::class);
     }

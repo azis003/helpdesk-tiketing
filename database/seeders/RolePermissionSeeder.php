@@ -31,36 +31,36 @@ class RolePermissionSeeder extends Seeder
         ];
 
         foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission]);
+            Permission::findOrCreate($permission, 'web');
         }
 
         // Create roles and assign permissions
         
         // Super Admin (10)
-        $superAdmin = Role::create(['name' => 'super_admin']);
-        $superAdmin->givePermissionTo([
+        $superAdmin = Role::findOrCreate('super_admin', 'web');
+        $superAdmin->syncPermissions([
             'ticket.view', 'ticket.view-audit-trail', 'dashboard.operational', 'report.export',
             'master.category', 'master.priority', 'master.work-unit', 'master.user',
             'master.permission', 'profile.manage'
         ]);
 
         // Pegawai (10)
-        $pegawai = Role::create(['name' => 'pegawai']);
-        $pegawai->givePermissionTo([
+        $pegawai = Role::findOrCreate('pegawai', 'web');
+        $pegawai->syncPermissions([
             'ticket.create', 'ticket.view', 'ticket.close', 'ticket.reopen', 'ticket.reply-clarification',
             'ticket.comment', 'ticket.upload-attachment', 'dashboard.personal', 'report.personal', 'profile.manage'
         ]);
 
         // Ketua Tim Kerja (11)
-        $ketuaTim = Role::create(['name' => 'ketua_tim_kerja']);
-        $ketuaTim->givePermissionTo([
+        $ketuaTim = Role::findOrCreate('ketua_tim_kerja', 'web');
+        $ketuaTim->syncPermissions([
             'ticket.create', 'ticket.view', 'ticket.close', 'ticket.reopen', 'ticket.reply-clarification',
             'ticket.comment', 'ticket.upload-attachment', 'dashboard.personal', 'dashboard.team', 'report.personal', 'profile.manage'
         ]);
 
         // Helpdesk (22)
-        $helpdesk = Role::create(['name' => 'helpdesk']);
-        $helpdesk->givePermissionTo([
+        $helpdesk = Role::findOrCreate('helpdesk', 'web');
+        $helpdesk->syncPermissions([
             'ticket.create', 'ticket.view', 'ticket.close', 'ticket.reopen', 'ticket.verify',
             'ticket.change-priority', 'ticket.change-category', 'ticket.assign', 'ticket.reassign',
             'ticket.update-progress', 'ticket.resolve', 'ticket.request-approval', 'ticket.mark-third-party',
@@ -69,16 +69,16 @@ class RolePermissionSeeder extends Seeder
         ]);
 
         // Teknisi (13)
-        $teknisi = Role::create(['name' => 'teknisi']);
-        $teknisi->givePermissionTo([
+        $teknisi = Role::findOrCreate('teknisi', 'web');
+        $teknisi->syncPermissions([
             'ticket.view', 'ticket.return', 'ticket.update-progress', 'ticket.resolve', 'ticket.request-approval',
             'ticket.mark-third-party', 'ticket.clarify', 'ticket.comment', 'ticket.upload-attachment',
             'ticket.view-audit-trail', 'dashboard.personal', 'report.personal', 'profile.manage'
         ]);
 
         // Manager IT (8)
-        $managerIt = Role::create(['name' => 'manager_it']);
-        $managerIt->givePermissionTo([
+        $managerIt = Role::findOrCreate('manager_it', 'web');
+        $managerIt->syncPermissions([
             'ticket.view', 'ticket.comment', 'ticket.upload-attachment', 'ticket.approve',
             'dashboard.operational', 'report.export', 'report.personal', 'profile.manage'
         ]);

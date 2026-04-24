@@ -3,18 +3,19 @@
 namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Master\UpdateRolePermissionsRequest;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\PermissionRegistrar;
+use Spatie\Permission\Models\Role;
 
 class PermissionController extends Controller
 {
     public function index()
     {
-        $roles = Role::with('permissions')->get();
-        $permissions = Permission::all();
+        $roles = Role::query()->with('permissions')->orderBy('name')->get();
+        $permissions = Permission::query()->orderBy('name')->get();
         
         return Inertia::render('Master/Permission/Index', [
             'roles' => $roles,
@@ -22,21 +23,22 @@ class PermissionController extends Controller
         ]);
     }
 
-    public function update(Request $request)
+    public function update(UpdateRolePermissionsRequest $request)
     {
-        $request->validate([
-            'permissions' => 'required|array',
-        ]);
+        $validated = $request->validated();
 
-        foreach ($request->permissions as $roleId => $permissionIds) {
-            $role = Role::findById($roleId);
-            if ($role) {
-                // permissionIds can be array of ids or array of names, syncPermissions accepts both.
-                // assuming the frontend sends array of permission ids
-                $permissions = Permission::whereIn('id', $permissionIds)->get();
+        DB::transaction(function () use ($validated): void {
+            foreach ($validated['permissions'] as $roleId => $permissionIds) {
+                $role = Role::query()->find($roleId);
+
+                if (! $role) {
+                    continue;
+                }
+
+                $permissions = Permission::query()->whereIn('id', $permissionIds)->get();
                 $role->syncPermissions($permissions);
             }
-        }
+        });
 
         app()->make(PermissionRegistrar::class)->forgetCachedPermissions();
 

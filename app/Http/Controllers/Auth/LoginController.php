@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,14 +21,11 @@ class LoginController extends Controller
         return Inertia::render('Auth/Login');
     }
 
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $request->validate([
-            'username' => 'required|string',
-            'password' => 'required|string',
-        ]);
+        $credentials = $request->validated();
 
-        $user = User::where('username', $request->username)->first();
+        $user = User::query()->where('username', $credentials['username'])->first();
 
         // Cek user ada
         if (!$user) {
@@ -40,7 +38,7 @@ class LoginController extends Controller
         }
 
         // Cek password
-        if (!Hash::check($request->password, $user->password)) {
+        if (!Hash::check($credentials['password'], $user->password)) {
             return back()->withErrors(['password' => 'Password salah']);
         }
 

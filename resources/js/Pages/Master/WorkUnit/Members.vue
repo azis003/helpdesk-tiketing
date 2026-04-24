@@ -71,12 +71,12 @@ const removeMember = (userId) => {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="member in workUnit.members" :key="member.user.id" class="border-b hover:bg-gray-50">
-                                    <td class="px-6 py-4">{{ member.user.id }}</td>
-                                    <td class="px-6 py-4">{{ member.user.username }}</td>
-                                    <td class="px-6 py-4">{{ member.user.name }}</td>
+                                <tr v-for="member in workUnit.members" :key="member.id" class="border-b hover:bg-gray-50">
+                                    <td class="px-6 py-4">{{ member.id }}</td>
+                                    <td class="px-6 py-4">{{ member.username }}</td>
+                                    <td class="px-6 py-4">{{ member.name }}</td>
                                     <td class="px-6 py-4">
-                                        <button @click="removeMember(member.user.id)" class="text-red-600 hover:text-red-800">
+                                        <button @click="removeMember(member.id)" class="text-red-600 hover:text-red-800">
                                             Hapus
                                         </button>
                                     </td>

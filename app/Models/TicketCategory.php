@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TicketCategory extends Model
 {
@@ -15,7 +17,12 @@ class TicketCategory extends Model
         'is_active' => 'boolean',
     ];
 
-    public function tickets()
+    public function scopeActive(Builder $query): void
+    {
+        $query->where('is_active', true);
+    }
+
+    public function tickets(): HasMany
     {
         return $this->hasMany(Ticket::class, 'category_id');
     }

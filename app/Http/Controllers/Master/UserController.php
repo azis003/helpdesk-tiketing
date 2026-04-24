@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Master\StoreUserRequest;
+use App\Http\Requests\Master\UpdateUserRequest;
 use App\Models\User;
 use App\Models\WorkUnit;
-use App\Models\Ticket;
-use App\Enums\TicketStatus;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
-use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
@@ -36,35 +36,31 @@ class UserController extends Controller
 
     public function create()
     {
-        $roles = Role::all();
-        $workUnits = WorkUnit::where('is_active', 1)->get();
+        $roles = Role::query()->orderBy('name')->get();
+        $workUnits = WorkUnit::query()->active()->orderBy('name')->get();
+
         return Inertia::render('Master/User/Create', [
             'roles' => $roles,
             'workUnits' => $workUnits,
         ]);
     }
 
-    public function store(Request $request)
+    public function store(StoreUserRequest $request)
     {
-        $validated = $request->validate([
-            'username' => 'required|string|max:50|unique:users,username',
-            'name' => 'required|string|max:100',
-            'email' => 'nullable|email|max:100|unique:users,email',
-            'password' => 'required|string|min:8',
-            'role' => 'required|exists:roles,name',
-            'work_unit_id' => 'nullable|exists:work_units,id',
-        ]);
+        $validated = $request->validated();
 
-        $user = User::create([
-            'username' => $validated['username'],
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-            'work_unit_id' => $validated['work_unit_id'] ?? null,
-            'is_active' => 1,
-        ]);
+        DB::transaction(function () use ($validated): void {
+            $user = User::query()->create([
+                'username' => $validated['username'],
+                'name' => $validated['name'],
+                'email' => $validated['email'] ?? null,
+                'password' => $validated['password'],
+                'work_unit_id' => $validated['work_unit_id'] ?? null,
+                'is_active' => true,
+            ]);
 
-        $user->assignRole($validated['role']);
+            $user->assignRole($validated['role']);
+        });
 
         return redirect()->route('master.users.index')->with('success', 'User berhasil ditambahkan.');
     }
@@ -72,8 +68,9 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $user->load('roles');
-        $roles = Role::all();
-        $workUnits = WorkUnit::where('is_active', 1)->get();
+        $roles = Role::query()->orderBy('name')->get();
+        $workUnits = WorkUnit::query()->active()->orderBy('name')->get();
+
         return Inertia::render('Master/User/Edit', [
             'user' => $user,
             'roles' => $roles,
@@ -81,44 +78,32 @@ class UserController extends Controller
         ]);
     }
 
-    public function update(Request $request, User $user)
+    public function update(UpdateUserRequest $request, User $user)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:100',
-            'email' => 'nullable|email|max:100|unique:users,email,' . $user->id,
-            'password' => 'nullable|string|min:8',
-            'role' => 'required|exists:roles,name',
-            'work_unit_id' => 'nullable|exists:work_units,id',
-        ]);
+        $validated = $request->validated();
 
         $data = [
             'name' => $validated['name'],
-            'email' => $validated['email'],
+            'email' => $validated['email'] ?? null,
             'work_unit_id' => $validated['work_unit_id'] ?? null,
         ];
 
         if (!empty($validated['password'])) {
-            $data['password'] = Hash::make($validated['password']);
+            $data['password'] = $validated['password'];
         }
 
-        $user->update($data);
-        $user->syncRoles([$validated['role']]);
+        DB::transaction(function () use ($user, $data, $validated): void {
+            $user->update($data);
+            $user->syncRoles([$validated['role']]);
+        });
 
         return redirect()->route('master.users.index')->with('success', 'User berhasil diperbarui.');
     }
 
     public function toggleActive(User $user)
     {
-        if ($user->is_active == 1) {
-            // Cek tiket aktif jika mau dinonaktifkan
-            $activeTickets = Ticket::where('handler_id', $user->id)
-                ->whereIn('status', [
-                    TicketStatus::InProgress->value,
-                    TicketStatus::WaitingForInfo->value,
-                    TicketStatus::WaitingThirdParty->value,
-                    TicketStatus::PendingApproval->value,
-                ])
-                ->count();
+        if ($user->is_active) {
+            $activeTickets = $user->activeAssignedTickets()->count();
 
             if ($activeTickets > 0) {
                 return redirect()->back()->withErrors([
@@ -128,6 +113,7 @@ class UserController extends Controller
         }
 
         $user->update(['is_active' => !$user->is_active]);
+
         return redirect()->back()->with('success', 'Status user berhasil diubah.');
     }
 }

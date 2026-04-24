@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Enums\ApprovalStatus;
 
 return new class extends Migration
 {
@@ -16,7 +17,8 @@ return new class extends Migration
             $table->foreignId('ticket_id')->constrained('tickets')->cascadeOnDelete();
             $table->foreignId('requested_by')->constrained('users')->restrictOnDelete();
             $table->foreignId('reviewed_by')->nullable()->constrained('users')->nullOnDelete();
-            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->enum('status', array_column(ApprovalStatus::cases(), 'value'))
+                ->default(ApprovalStatus::Pending->value);
             $table->boolean('is_current')->default(true);
             $table->text('note')->nullable();
             $table->timestamp('reviewed_at')->nullable();

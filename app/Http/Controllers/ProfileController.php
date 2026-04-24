@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Http\Requests\Profile\UpdatePasswordRequest;
+use App\Http\Requests\Profile\UpdateProfileRequest;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -27,19 +27,14 @@ class ProfileController extends Controller
         ]);
     }
 
-    public function update(Request $request)
+    public function update(UpdateProfileRequest $request)
     {
         $user = $request->user();
-
-        $request->validate([
-            'name' => 'required|string|max:100',
-            'email' => 'nullable|email|max:100|unique:users,email,' . $user->id,
-            'avatar' => 'nullable|image|max:2048',
-        ]);
+        $validated = $request->validated();
 
         $data = [
-            'name' => $request->name,
-            'email' => $request->email,
+            'name' => $validated['name'],
+            'email' => $validated['email'] ?? null,
         ];
 
         if ($request->hasFile('avatar')) {
@@ -57,19 +52,16 @@ class ProfileController extends Controller
         return back()->with('success', 'Profil berhasil diperbarui');
     }
 
-    public function updatePassword(Request $request)
+    public function updatePassword(UpdatePasswordRequest $request)
     {
-        $request->validate([
-            'current_password' => 'required',
-            'password' => 'required|min:8|confirmed',
-        ]);
+        $validated = $request->validated();
 
-        if (!Hash::check($request->current_password, $request->user()->password)) {
+        if (!Hash::check($validated['current_password'], $request->user()->password)) {
             return back()->withErrors(['current_password' => 'Password lama salah']);
         }
 
         $request->user()->update([
-            'password' => Hash::make($request->password),
+            'password' => $validated['password'],
         ]);
 
         return back()->with('success', 'Password berhasil diubah');

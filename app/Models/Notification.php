@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Notification extends Model
 {
@@ -21,13 +23,30 @@ class Notification extends Model
         'created_at' => 'datetime',
     ];
 
-    public function user()
+    public function scopeUnread(Builder $query): void
+    {
+        $query->where('is_read', false);
+    }
+
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function ticket()
+    public function ticket(): BelongsTo
     {
         return $this->belongsTo(Ticket::class);
+    }
+
+    public function markAsRead(): void
+    {
+        if ($this->is_read) {
+            return;
+        }
+
+        $this->update([
+            'is_read' => true,
+            'read_at' => now(),
+        ]);
     }
 }

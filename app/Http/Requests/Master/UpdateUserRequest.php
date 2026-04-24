@@ -17,7 +17,8 @@ class UpdateUserRequest extends StoreUserRequest
             'name' => ['required', 'string', 'max:100'],
             'email' => ['nullable', 'email', 'max:100', Rule::unique('users', 'email')->ignore($user)],
             'password' => ['nullable', 'string', 'min:8'],
-            'role' => ['required', 'exists:roles,name'],
+            'roles' => ['required', 'array', 'min:1'],
+            'roles.*' => ['required', 'string', 'distinct', 'exists:roles,name'],
             'work_unit_id' => ['nullable', 'exists:work_units,id'],
         ];
     }

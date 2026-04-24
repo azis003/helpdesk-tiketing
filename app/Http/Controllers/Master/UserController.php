@@ -61,7 +61,7 @@ class UserController extends Controller
                 'is_active' => true,
             ]);
 
-            $user->assignRole($validated['role']);
+            $user->syncRoles($validated['roles']);
         });
 
         return redirect()->route('master.users.index')->with('success', 'User berhasil ditambahkan.');
@@ -96,7 +96,7 @@ class UserController extends Controller
 
         DB::transaction(function () use ($user, $data, $validated): void {
             $user->update($data);
-            $user->syncRoles([$validated['role']]);
+            $user->syncRoles($validated['roles']);
         });
 
         return redirect()->route('master.users.index')->with('success', 'User berhasil diperbarui.');

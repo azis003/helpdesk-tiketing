@@ -7,6 +7,16 @@ use Illuminate\Validation\Rule;
 
 class StoreUserRequest extends FormRequest
 {
+    protected function prepareForValidation(): void
+    {
+        // Backward compatibility for old clients that still send a single "role".
+        if ($this->filled('role') && ! $this->has('roles')) {
+            $this->merge([
+                'roles' => [$this->input('role')],
+            ]);
+        }
+    }
+
     public function authorize(): bool
     {
         return true;
@@ -22,7 +32,8 @@ class StoreUserRequest extends FormRequest
             'name' => ['required', 'string', 'max:100'],
             'email' => ['nullable', 'email', 'max:100', Rule::unique('users', 'email')],
             'password' => ['required', 'string', 'min:8'],
-            'role' => ['required', 'exists:roles,name'],
+            'roles' => ['required', 'array', 'min:1'],
+            'roles.*' => ['required', 'string', 'distinct', 'exists:roles,name'],
             'work_unit_id' => ['nullable', 'exists:work_units,id'],
         ];
     }

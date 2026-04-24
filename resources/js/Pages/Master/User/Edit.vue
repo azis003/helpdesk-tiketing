@@ -12,12 +12,24 @@ const form = useForm({
     name: props.user.name,
     email: props.user.email || '',
     password: '',
-    role: props.user.roles.length > 0 ? props.user.roles[0].name : '',
+    roles: Array.isArray(props.user.roles) ? props.user.roles.map((role) => role.name) : [],
     work_unit_id: props.user.work_unit_id || '',
 });
 
+const getRolesError = () => {
+    if (form.errors.roles) {
+        return form.errors.roles;
+    }
+
+    const nestedRoleError = Object.entries(form.errors).find(([field]) => field.startsWith('roles.'));
+    return nestedRoleError ? nestedRoleError[1] : null;
+};
+
 const submit = () => {
-    form.put(route('master.users.update', props.user.id));
+    form.transform((data) => ({
+        ...data,
+        work_unit_id: data.work_unit_id === '' ? null : data.work_unit_id,
+    })).put(route('master.users.update', props.user.id));
 };
 </script>
 
@@ -62,14 +74,14 @@ const submit = () => {
                                 </div>
 
                                 <div class="mb-4">
-                                    <label for="role" class="block font-medium text-sm text-gray-700">Role</label>
-                                    <select id="role" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" v-model="form.role" required>
-                                        <option value="" disabled>-- Pilih Role --</option>
+                                    <label for="roles" class="block font-medium text-sm text-gray-700">Role</label>
+                                    <select id="roles" multiple class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 min-h-28" v-model="form.roles" required>
                                         <option v-for="role in roles" :key="role.id" :value="role.name">
                                             {{ role.name }}
                                         </option>
                                     </select>
-                                    <div v-if="form.errors.role" class="text-sm text-red-600 mt-1">{{ form.errors.role }}</div>
+                                    <span class="text-xs text-gray-500">Pilih satu atau lebih role.</span>
+                                    <div v-if="getRolesError()" class="text-sm text-red-600 mt-1">{{ getRolesError() }}</div>
                                 </div>
 
                                 <div class="mb-4">

@@ -10,6 +10,7 @@ import Swal from 'sweetalert2';
 const props = defineProps({
     priorities: Object,
     filters: Object,
+    next_level: Number,
 });
 
 // State
@@ -36,6 +37,7 @@ const toggleForm = useForm({});
 // Actions
 const openCreateModal = () => {
     createForm.reset();
+    createForm.level = props.next_level; // Default to next available level
     createForm.clearErrors();
     showCreateModal.value = true;
 };
@@ -253,6 +255,7 @@ watch(search, debounce((value) => {
                                 class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-600 font-medium"
                                 required
                             />
+                            <div v-if="createForm.errors.level" class="text-sm text-red-500 mt-2 font-medium">{{ createForm.errors.level }}</div>
                         </div>
                         <div>
                             <label for="color" class="block text-sm font-bold text-slate-700 mb-2">
@@ -271,6 +274,7 @@ watch(search, debounce((value) => {
                                     class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-600 font-mono"
                                 />
                             </div>
+                            <div v-if="createForm.errors.color" class="text-sm text-red-500 mt-2 font-medium">{{ createForm.errors.color }}</div>
                         </div>
                     </div>
 
@@ -325,6 +329,7 @@ watch(search, debounce((value) => {
                                 Level <span class="text-red-500">*</span>
                             </label>
                             <input id="edit_level" type="number" v-model="editForm.level" class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-600 font-medium" required />
+                            <div v-if="editForm.errors.level" class="text-sm text-red-500 mt-2 font-medium">{{ editForm.errors.level }}</div>
                         </div>
                         <div>
                             <label for="edit_color" class="block text-sm font-bold text-slate-700 mb-2">
@@ -334,6 +339,7 @@ watch(search, debounce((value) => {
                                 <input id="edit_color" type="color" v-model="editForm.color" class="h-12 w-20 p-1 bg-white border border-slate-200 rounded-xl cursor-pointer" />
                                 <input type="text" v-model="editForm.color" class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-600 font-mono" />
                             </div>
+                            <div v-if="editForm.errors.color" class="text-sm text-red-500 mt-2 font-medium">{{ editForm.errors.color }}</div>
                         </div>
                     </div>
 
